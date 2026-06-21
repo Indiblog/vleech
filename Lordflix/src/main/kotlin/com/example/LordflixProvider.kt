@@ -78,7 +78,7 @@ class LordflixProvider : MainAPI() {
 
         val resp = app.get(apiUrl).parsedSafe<LFTmdbPaged>() ?: return newHomePageResponse(request.name, emptyList())
         val items = resp.results.mapNotNull { it.toSearchResponse(mediaType) }
-        return newHomePageResponse(request.name, items, hasNextPage = page < (resp.totalPages ?: 1))
+        return newHomePageResponse(request.name, items, hasNext = page < (resp.totalPages ?: 1))
     }
 
     // ─── Search ────────────────────────────────────────────────────────────────
