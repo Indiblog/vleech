@@ -1,69 +1,50 @@
-// Provider for: https://lordflix.org
-//
-// ARCHITECTURE NOTE — WHY TMDB API IS USED HERE:
-//   lordflix.org is a React single-page application. Its /movies and /series pages return
-//   only skeleton metadata HTML — no content is accessible via Jsoup scraping.
-//   URL routes like /movies, /series, /lists confirm a React Router SPA frontend.
-//   PCrisk analysis: "navigation sections such as Home, Movies, Shows, and My List".
-//
-//   Strategy (identical to RivestreamProvider):
-//     1. Browse / search  → TMDB API
-//     2. Load detail       → TMDB API; token "lf:{type}:{tmdb_id}"
-//     3. Video links       → Three attempts in order:
-//          a) Fetch Lordflix watch page + extract any iframes or __NEXT_DATA__ URLs
-//          b) vidsrc.cc embed   (primary TMDB-keyed fallback)
-//          c) autoembed.co      (secondary TMDB-keyed fallback)
-//
-// Data classes are deliberately NOT shared with RivestreamProvider to keep modules
-// independent — each module compiles as a standalone .cs3 file.
-
 package com.example
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class LordflixProvider : MainAPI() {
-    // ► Fallback domain; overridden at runtime by DomainResolver.
     override var mainUrl = DomainConfig.LORDFLIX
 
     private var domainChecked = false
     private suspend fun ensureDomain() {
         if (domainChecked) return
         domainChecked = true
-        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             mainUrl = DomainResolver.resolveBlocking("LORDFLIX", DomainConfig.LORDFLIX)
         }
     }
-    override var name    = "LordFlix"
+
+    override var name              = "LordFlix"
     override val hasMainPage        = true
     override var lang               = "en"
     override val hasDownloadSupport = false
     override val supportedTypes     = setOf(TvType.Movie, TvType.TvSeries)
 
     companion object {
-        private const val TMDB_KEY  = "1865f43a0549ca50d341dd9ab8b29f49"
-        private const val TMDB_API  = "https://api.themoviedb.org/3"
-        private const val TMDB_IMG  = "https://image.tmdb.org/t/p/w500"
-        private const val TMDB_ORIG = "https://image.tmdb.org/t/p/original"
-        private const val VIDSRC_MOVIE = "https://vidsrc.cc/v2/embed/movie/"
-        private const val VIDSRC_TV    = "https://vidsrc.cc/v2/embed/tv/"
+        private const val TMDB_KEY        = "1865f43a0549ca50d341dd9ab8b29f49"
+        private const val TMDB_API        = "https://api.themoviedb.org/3"
+        private const val TMDB_IMG        = "https://image.tmdb.org/t/p/w500"
+        private const val TMDB_ORIG       = "https://image.tmdb.org/t/p/original"
+        private const val VIDSRC_MOVIE    = "https://vidsrc.cc/v2/embed/movie/"
+        private const val VIDSRC_TV       = "https://vidsrc.cc/v2/embed/tv/"
         private const val AUTOEMBED_MOVIE = "https://autoembed.co/movie/tmdb-"
         private const val AUTOEMBED_TV    = "https://autoembed.co/tv/tmdb-"
     }
 
-    // ─── Main page ─────────────────────────────────────────────────────────────
-
     override val mainPage = mainPageOf(
-        "movie:trending:day"    to "Trending Movies",
-        "tv:trending:day"       to "Trending Shows",
-        "movie:popular"         to "Popular Movies",
-        "tv:popular"            to "Popular Shows",
-        "movie:top_rated"       to "Top Rated Movies",
-        "tv:top_rated"          to "Top Rated Shows",
-        "movie:now_playing"     to "Now Playing",
-        "tv:on_the_air"         to "On The Air"
+        "movie:trending:day" to "Trending Movies",
+        "tv:trending:day"    to "Trending Shows",
+        "movie:popular"      to "Popular Movies",
+        "tv:popular"         to "Popular Shows",
+        "movie:top_rated"    to "Top Rated Movies",
+        "tv:top_rated"       to "Top Rated Shows",
+        "movie:now_playing"  to "Now Playing",
+        "tv:on_the_air"      to "On The Air"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
@@ -76,12 +57,11 @@ class LordflixProvider : MainAPI() {
                 "$TMDB_API/$mediaType/$endpoint"
         } + "?api_key=$TMDB_KEY&page=$page"
 
-        val resp = app.get(apiUrl).parsedSafe<LFTmdbPaged>() ?: return newHomePageResponse(request.name, emptyList())
+        val resp  = app.get(apiUrl).parsedSafe<LFTmdbPaged>()
+            ?: return newHomePageResponse(request.name, emptyList())
         val items = resp.results.mapNotNull { it.toSearchResponse(mediaType) }
         return newHomePageResponse(request.name, items, hasNext = page < (resp.totalPages ?: 1))
     }
-
-    // ─── Search ────────────────────────────────────────────────────────────────
 
     override suspend fun search(query: String): List<SearchResponse> {
         ensureDomain()
@@ -92,8 +72,6 @@ class LordflixProvider : MainAPI() {
             if (mt == "person") null else it.toSearchResponse(mt)
         }
     }
-
-    // ─── Load detail ───────────────────────────────────────────────────────────
 
     override suspend fun load(url: String): LoadResponse? {
         ensureDomain()
@@ -160,28 +138,23 @@ class LordflixProvider : MainAPI() {
         }
     }
 
-    // ─── Load links ────────────────────────────────────────────────────────────
-
     override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val parts     = data.split(":")
+        val parts      = data.split(":")
         if (parts.size < 3) return false
         val mediaType  = parts[1]
         val tmdbId     = parts[2]
         val seasonNum  = if (parts.size > 3) Regex("s(\\d+)").find(parts[3])?.groupValues?.get(1)?.toIntOrNull() else null
         val episodeNum = if (parts.size > 3) Regex("e(\\d+)").find(parts[3])?.groupValues?.get(1)?.toIntOrNull() else null
 
-        // Attempt 1 — Fetch Lordflix watch page and extract iframes / JSON embeds.
-        // URL pattern inferred from the site's React Router: /movie/{id} or /series/{id}/{s}/{e}
         val watchUrl = if (mediaType == "movie") "$mainUrl/movie/$tmdbId"
                        else "$mainUrl/series/$tmdbId/$seasonNum/$episodeNum"
         try {
             val doc      = app.get(watchUrl, timeout = 10000L).document
-            // Next.js __NEXT_DATA__ can contain embed URLs even in client-side apps
             val nextData = doc.selectFirst("script#__NEXT_DATA__")?.data()
             if (!nextData.isNullOrBlank()) {
                 Regex("""https?://[^\s"'\\]+\.(m3u8|mp4)[^\s"'\\]*""").findAll(nextData).forEach { m ->
@@ -194,12 +167,10 @@ class LordflixProvider : MainAPI() {
             }
         } catch (_: Exception) { }
 
-        // Attempt 2 — vidsrc.cc (primary TMDB-keyed fallback)
         val vidsrcUrl = if (mediaType == "movie") "$VIDSRC_MOVIE$tmdbId"
                         else "$VIDSRC_TV$tmdbId/$seasonNum/$episodeNum"
         loadExtractor(vidsrcUrl, mainUrl, subtitleCallback, callback)
 
-        // Attempt 3 — autoembed.co (secondary TMDB-keyed fallback)
         val autoembedUrl = if (mediaType == "movie") "$AUTOEMBED_MOVIE$tmdbId"
                            else "$AUTOEMBED_TV$tmdbId-$seasonNum-$episodeNum"
         loadExtractor(autoembedUrl, mainUrl, subtitleCallback, callback)
@@ -221,13 +192,14 @@ class LordflixProvider : MainAPI() {
         }
     }
 
-    private fun LoadResponse.safeAddTrailer(url: String?) {
+    // suspend so it can call the suspend addTrailer inside a builder block
+    private suspend fun LoadResponse.safeAddTrailer(url: String?) {
         if (url != null) try { addTrailer(url) } catch (_: Exception) { }
     }
 
     private fun String.encodeUrl() = java.net.URLEncoder.encode(this, "UTF-8")
 
-    // ─── TMDB data classes (prefixed LF to stay local to this module) ──────────
+    // ─── TMDB data classes ─────────────────────────────────────────────────────
 
     data class LFTmdbPaged(
         @JsonProperty("results")     val results: List<LFTmdbResult> = emptyList(),
@@ -243,20 +215,20 @@ class LordflixProvider : MainAPI() {
     )
 
     data class LFTmdbDetail(
-        @JsonProperty("id")               val id: Int?,
-        @JsonProperty("title")            val title: String?,
-        @JsonProperty("name")             val name: String?,
-        @JsonProperty("overview")         val overview: String?,
-        @JsonProperty("poster_path")      val posterPath: String?,
-        @JsonProperty("backdrop_path")    val backdropPath: String?,
-        @JsonProperty("release_date")     val releaseDate: String?,
-        @JsonProperty("first_air_date")   val firstAirDate: String?,
-        @JsonProperty("vote_average")     val voteAverage: Double?,
-        @JsonProperty("genres")           val genres: List<LFGenre>?,
-        @JsonProperty("seasons")          val seasons: List<LFSeasonSummary>?,
-        @JsonProperty("credits")          val credits: LFCredits?,
-        @JsonProperty("videos")           val videos: LFVideos?,
-        @JsonProperty("external_ids")     val externalIds: Map<String, Any?>?
+        @JsonProperty("id")             val id: Int?,
+        @JsonProperty("title")          val title: String?,
+        @JsonProperty("name")           val name: String?,
+        @JsonProperty("overview")       val overview: String?,
+        @JsonProperty("poster_path")    val posterPath: String?,
+        @JsonProperty("backdrop_path")  val backdropPath: String?,
+        @JsonProperty("release_date")   val releaseDate: String?,
+        @JsonProperty("first_air_date") val firstAirDate: String?,
+        @JsonProperty("vote_average")   val voteAverage: Double?,
+        @JsonProperty("genres")         val genres: List<LFGenre>?,
+        @JsonProperty("seasons")        val seasons: List<LFSeasonSummary>?,
+        @JsonProperty("credits")        val credits: LFCredits?,
+        @JsonProperty("videos")         val videos: LFVideos?,
+        @JsonProperty("external_ids")   val externalIds: Map<String, Any?>?
     )
 
     data class LFGenre(@JsonProperty("name") val name: String)
