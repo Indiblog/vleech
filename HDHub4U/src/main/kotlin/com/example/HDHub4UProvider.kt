@@ -76,8 +76,8 @@ class HDHub4UProvider : MainAPI() {
         }
     }
 
-    private fun org.jsoup.nodes.Document.toSearchResult(): SearchResponse =
-        newMovieSearchResponse(postTitle, permalink, TvType.Movie) { posterUrl = postThumbnail }
+    private fun Document.toSearchResult(): SearchResponse =
+        newMovieSearchResponse(postTitle ?: "", permalink ?: "", TvType.Movie) { posterUrl = postThumbnail }
 
     override suspend fun search(query: String, page: Int): SearchResponseList {
         ensureDomain()
