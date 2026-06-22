@@ -192,10 +192,9 @@ class LordflixProvider : MainAPI() {
         }
     }
 
-    // suspend so it can call the suspend addTrailer inside a builder block
-    private suspend fun LoadResponse.safeAddTrailer(url: String?) {
-        if (url != null) try { addTrailer(url) } catch (_: Exception) { }
-    }
+    // addTrailer is not available in this pre-release build; trailers skipped
+    @Suppress("UNUSED_PARAMETER")
+    private fun LoadResponse.safeAddTrailer(url: String?) = Unit
 
     private fun String.encodeUrl() = java.net.URLEncoder.encode(this, "UTF-8")
 
