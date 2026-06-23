@@ -79,15 +79,15 @@ class HDHub4UProvider : MainAPI() {
     private fun Document.toSearchResult(): SearchResponse =
         newMovieSearchResponse(postTitle ?: "", permalink ?: "", TvType.Movie) { posterUrl = postThumbnail }
 
-    override suspend fun search(query: String, page: Int): SearchResponseList {
+    override suspend fun search(query: String): List<SearchResponse> {
         ensureDomain()
         val response = app.get(
             "https://search.pingora.fyi/collections/post/documents/search" +
                     "?q=$query&query_by=post_title,category&query_by_weights=4,2" +
-                    "&sort_by=sort_by_date:desc&limit=15&highlight_fields=none&use_cache=true&page=$page",
+                    "&sort_by=sort_by_date:desc&limit=15&highlight_fields=none&use_cache=true&page=1",
             headers = headers, referer = mainUrl
         ).parsedSafe<Search>()
-        return response?.hits!!.map { it.document.toSearchResult() }.toNewSearchResponseList()
+        return response?.hits?.map { it.document.toSearchResult() } ?: emptyList()
     }
 
     private fun extractLinksATags(aTags: Elements): List<String> {
