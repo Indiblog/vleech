@@ -59,6 +59,19 @@ jobs:
         run: |
           cp $GITHUB_WORKSPACE/src/build/plugins.json $GITHUB_WORKSPACE/builds/plugins.json
 
+      - name: Generate repo.json manifest for CloudStream shortcode
+        run: |
+          cat > $GITHUB_WORKSPACE/builds/repo.json << 'EOF'
+          {
+            "name": "vleech",
+            "description": "6 Indian & English streaming providers for CloudStream",
+            "manifestVersion": 1,
+            "pluginLists": [
+              "https://raw.githubusercontent.com/${{ github.repository }}/builds/plugins.json"
+            ]
+          }
+          EOF
+
       - name: Commit and push builds
         run: |
           cd $GITHUB_WORKSPACE/builds
