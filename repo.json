@@ -1,0 +1,8 @@
+{
+  "name": "vleech",
+  "description": "6 Indian & English streaming providers for CloudStream",
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://raw.githubusercontent.com/Indiblog/vleech/builds/plugins.json"
+  ]
+}

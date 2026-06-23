@@ -1,0 +1,136 @@
+[
+    {
+        "iconUrl": "https://i.ibb.co/nMdxZgkR/8-CM3-5q-ARZYELDWg6-Erqfg-NYpo-Sdh-Yw-HRB5-CMhf-Vgg-Ygn-PMHCVYWQf-EEJMt9gwd6-EFP5t-LYgd-LAm-Zerm-KCX.png",
+        "fileHash": "sha256-d5cefc8443d4a25adb77e79d8af6d3620a020923a10143b13d04669dc5d0c6af",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Indiblog/vleech",
+        "fileSize": 35312,
+        "status": 1,
+        "language": "hi",
+        "authors": [
+            "indiblog",
+            "Dilip",
+            "rockhero1234"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "version": 11,
+        "internalName": "Cinevood",
+        "description": "Bollywood, Hollywood, Regional Hindi movies and series (unstable at times)",
+        "url": "https://raw.githubusercontent.com/Indiblog/vleech/builds/Cinevood.cs3",
+        "name": "Cinevood"
+    },
+    {
+        "iconUrl": "https://raw.githubusercontent.com/phisher98/TVVVV/refs/heads/main/Icons/HDHUB.png",
+        "fileHash": "sha256-675bab1bd45a5131274192048c2cf24899dfabe6902b12bef1a32d116133a8e2",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Indiblog/vleech",
+        "fileSize": 75265,
+        "status": 1,
+        "language": "hi",
+        "authors": [
+            "indiblog",
+            "Phisher98"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries",
+            "Anime"
+        ],
+        "version": 49,
+        "internalName": "HDHub4U",
+        "url": "https://raw.githubusercontent.com/Indiblog/vleech/builds/HDHub4U.cs3",
+        "name": "HDHub4U"
+    },
+    {
+        "iconUrl": "https://lordflix.org/favicon.ico",
+        "fileHash": "sha256-6b3771793846f22334000efed83f39e12a34eb834cf701ebe63c6e145e32b1d5",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Indiblog/vleech",
+        "fileSize": 34797,
+        "status": 3,
+        "language": "en",
+        "authors": [
+            "indiblog"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "version": 1,
+        "internalName": "Lordflix",
+        "description": "LordFlix \u2014 Movies and TV Shows (TMDB browse, multi-embed links)",
+        "url": "https://raw.githubusercontent.com/Indiblog/vleech/builds/Lordflix.cs3",
+        "name": "Lordflix"
+    },
+    {
+        "iconUrl": "https://raw.githubusercontent.com/LikDev-256/likdev256-tamil-providers/master/MultiMoviesProvider/icon.png",
+        "fileHash": "sha256-978424b398845b83104d5ae1652915d2823b2665c6855ad2e049fcdf1ab5aab6",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Indiblog/vleech",
+        "fileSize": 31393,
+        "status": 1,
+        "language": "hi",
+        "authors": [
+            "indiblog",
+            "Phisher98"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries",
+            "Anime"
+        ],
+        "version": 50,
+        "internalName": "Multimovies",
+        "description": "Indian Multi-language HD Provider \u2014 Bollywood, Hollywood, South Indian, Anime",
+        "url": "https://raw.githubusercontent.com/Indiblog/vleech/builds/Multimovies.cs3",
+        "name": "Multimovies"
+    },
+    {
+        "iconUrl": "https://raw.githubusercontent.com/phisher98/TVVVV/refs/heads/main/Icons/piratexplay.png",
+        "fileHash": "sha256-8444c9b75f4529a9f259d0e1d0b06c07d2eb1c0f93ef8378dc1c70b6811927b0",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Indiblog/vleech",
+        "fileSize": 33916,
+        "status": 1,
+        "language": "hi",
+        "authors": [
+            "indiblog",
+            "Phisher98"
+        ],
+        "tvTypes": [
+            "AnimeMovie",
+            "Anime",
+            "Cartoon"
+        ],
+        "version": 2,
+        "internalName": "Piratexplay",
+        "description": "Anime and Cartoon in Hindi",
+        "url": "https://raw.githubusercontent.com/Indiblog/vleech/builds/Piratexplay.cs3",
+        "name": "Piratexplay"
+    },
+    {
+        "iconUrl": "https://www.rivestream.app/images/MetaImage.jpg",
+        "fileHash": "sha256-5032f563fd340f4536bd5745748fffc15db3c101275cc77deacc3c5c98b4ab99",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Indiblog/vleech",
+        "fileSize": 35821,
+        "status": 3,
+        "language": "en",
+        "authors": [
+            "indiblog"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries",
+            "Anime"
+        ],
+        "version": 1,
+        "internalName": "Rivestream",
+        "description": "Rivestream \u2014 Movies, TV, Anime, K-Drama via TMDB browse",
+        "url": "https://raw.githubusercontent.com/Indiblog/vleech/builds/Rivestream.cs3",
+        "name": "Rivestream"
+    }
+]
