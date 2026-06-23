@@ -36,6 +36,12 @@ class CinevoodProvider : MainAPI() {
     override val hasDownloadSupport = true
     private val cinemetaUrl = "https://v3-cinemeta.strem.io/meta"
 
+    // Cloudflare bypass — required for 1cinevood.eu and all known mirrors
+    private val cfHeaders = mapOf(
+        "User-Agent" to "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36",
+        "Cookie"     to "xla=s4t"
+    )
+
     override val supportedTypes = setOf(
         TvType.Movie,
         TvType.TvSeries,
@@ -65,21 +71,20 @@ class CinevoodProvider : MainAPI() {
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         ensureDomain()
         val url      = if (page == 1) "$mainUrl/${request.data}/" else "$mainUrl/${request.data}/page/$page/"
-        val document = app.get(url).document
+        val document = app.get(url, headers = cfHeaders).document
         val home     = document.select("article.latestpost").mapNotNull { toResult(it) }
         return newHomePageResponse(request.name, home)
     }
 
-    override suspend fun search(query: String, page: Int): SearchResponseList? {
+    override suspend fun search(query: String): List<SearchResponse> {
         ensureDomain()
-        val document     = app.get("$mainUrl/page/$page/?s=$query").document
-        val searchResult = document.select("article.latestpost").mapNotNull { toResult(it) }
-        return searchResult.toNewSearchResponseList()
+        val document     = app.get("$mainUrl/?s=$query", headers = cfHeaders).document
+        return document.select("article.latestpost").mapNotNull { toResult(it) }
     }
 
     override suspend fun load(url: String): LoadResponse? {
         ensureDomain()
-        val doc     = app.get(url).document
+        val doc     = app.get(url, headers = cfHeaders).document
         val imdbHref = doc.selectFirst("a[href^=https://www.imdb]")?.attr("href")
         val imdbId   = imdbHref?.substringAfter("title/")?.substringBefore("/")?.takeIf { it.isNotBlank() }
 
