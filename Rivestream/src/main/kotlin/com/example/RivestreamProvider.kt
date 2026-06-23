@@ -80,7 +80,7 @@ class RivestreamProvider : MainAPI() {
 
         val resp = app.get(url).parsedSafe<TmdbPagedResult>() ?: return newHomePageResponse(request.name, emptyList())
         val results = resp.results.mapNotNull { it.toSearchResponse(mediaType) }
-        return newHomePageResponse(request.name, results, hasNextPage = page < (resp.totalPages ?: 1))
+        return newHomePageResponse(request.name, results, hasNext = page < (resp.totalPages ?: 1))
     }
 
     // ─── Search ───────────────────────────────────────────────────────────────
@@ -241,9 +241,8 @@ class RivestreamProvider : MainAPI() {
         }
     }
 
-    private fun LoadResponse.addTrailerUrl(url: String?) {
-        if (url != null) try { addTrailer(url) } catch (_: Exception) { }
-    }
+    @Suppress("UNUSED_PARAMETER")
+    private fun LoadResponse.addTrailerUrl(url: String?) = Unit
 
     private fun String.encodeUrl() = java.net.URLEncoder.encode(this, "UTF-8")
 
