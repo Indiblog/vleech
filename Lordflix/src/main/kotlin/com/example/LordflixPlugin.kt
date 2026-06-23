@@ -8,5 +8,8 @@ import com.lagradost.cloudstream3.plugins.Plugin
 class LordflixPlugin : Plugin() {
     override fun load(context: Context) {
         registerMainAPI(LordflixProvider())
+        registerExtractorAPI(VidSrcTo())
+        registerExtractorAPI(VidSrcXyz())
+        registerExtractorAPI(MultiEmbed())
     }
 }

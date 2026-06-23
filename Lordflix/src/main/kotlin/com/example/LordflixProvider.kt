@@ -30,10 +30,12 @@ class LordflixProvider : MainAPI() {
         private const val TMDB_API        = "https://api.themoviedb.org/3"
         private const val TMDB_IMG        = "https://image.tmdb.org/t/p/w500"
         private const val TMDB_ORIG       = "https://image.tmdb.org/t/p/original"
-        private const val VIDSRC_MOVIE    = "https://vidsrc.cc/v2/embed/movie/"
-        private const val VIDSRC_TV       = "https://vidsrc.cc/v2/embed/tv/"
-        private const val AUTOEMBED_MOVIE = "https://autoembed.co/movie/tmdb-"
-        private const val AUTOEMBED_TV    = "https://autoembed.co/tv/tmdb-"
+        private const val VIDSRC_TO_MOVIE    = "https://vidsrc.to/embed/movie/"
+        private const val VIDSRC_TO_TV       = "https://vidsrc.to/embed/tv/"
+        private const val VIDSRC_XYZ_MOVIE   = "https://vidsrc.xyz/embed/movie?tmdb="
+        private const val VIDSRC_XYZ_TV      = "https://vidsrc.xyz/embed/tv?tmdb="
+        private const val MULTIEMBED_MOVIE   = "https://multiembed.mov/?video_id="
+        private const val MULTIEMBED_TV      = "https://multiembed.mov/?video_id="
     }
 
     override val mainPage = mainPageOf(
@@ -167,13 +169,20 @@ class LordflixProvider : MainAPI() {
             }
         } catch (_: Exception) { }
 
-        val vidsrcUrl = if (mediaType == "movie") "$VIDSRC_MOVIE$tmdbId"
-                        else "$VIDSRC_TV$tmdbId/$seasonNum/$episodeNum"
-        loadExtractor(vidsrcUrl, mainUrl, subtitleCallback, callback)
+        // Attempt 2 — vidsrc.to
+        val vidsrcToUrl = if (mediaType == "movie") "$VIDSRC_TO_MOVIE$tmdbId"
+                          else "$VIDSRC_TO_TV$tmdbId/$seasonNum/$episodeNum"
+        loadExtractor(vidsrcToUrl, mainUrl, subtitleCallback, callback)
 
-        val autoembedUrl = if (mediaType == "movie") "$AUTOEMBED_MOVIE$tmdbId"
-                           else "$AUTOEMBED_TV$tmdbId-$seasonNum-$episodeNum"
-        loadExtractor(autoembedUrl, mainUrl, subtitleCallback, callback)
+        // Attempt 3 — vidsrc.xyz
+        val vidsrcXyzUrl = if (mediaType == "movie") "$VIDSRC_XYZ_MOVIE$tmdbId"
+                           else "$VIDSRC_XYZ_TV$tmdbId&season=$seasonNum&episode=$episodeNum"
+        loadExtractor(vidsrcXyzUrl, mainUrl, subtitleCallback, callback)
+
+        // Attempt 4 — multiembed.mov
+        val multiembedUrl = if (mediaType == "movie") "${MULTIEMBED_MOVIE}$tmdbId&tmdb=1"
+                            else "${MULTIEMBED_TV}$tmdbId&tmdb=1&s=$seasonNum&e=$episodeNum"
+        loadExtractor(multiembedUrl, mainUrl, subtitleCallback, callback)
 
         return true
     }
