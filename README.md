@@ -4,10 +4,21 @@
 
 ## Install
 
+### One-tap install (Android)
+[![Add to CloudStream](https://img.shields.io/badge/CloudStream-Add%20Repo-blueviolet?style=for-the-badge&logo=android)](cs3://repo/raw.githubusercontent.com/indiblog/vleech/builds/plugins.json)
+
+> Tap the button above on your Android device to open CloudStream and add this repo instantly.
+
+### Manual install
 In CloudStream → **Settings** → **Extensions** → **Add repository**, paste:
 
 ```
 https://raw.githubusercontent.com/indiblog/vleech/builds/plugins.json
+```
+
+### Deeplink (share with others)
+```
+cs3://repo/raw.githubusercontent.com/indiblog/vleech/builds/plugins.json
 ```
 
 ## Plugins
@@ -34,4 +45,4 @@ Built `.cs3` files and `plugins.json` live in the [`builds`](../../tree/builds) 
 
 ## Domain updates
 
-If a source site moves to a new domain, edit [`library/src/main/kotlin/DomainConfig.kt`](src/main/kotlin/DomainConfig.kt) on `main` and push — all 6 plugins pick up the change on next install/update.
+If a source site moves to a new domain, edit `library/src/main/kotlin/DomainConfig.kt` on `main` and push — all 6 plugins pick up the change on next install/update.
