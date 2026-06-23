@@ -43,8 +43,7 @@ class PiratexplayProvider : MainAPI() {
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         ensureDomain()
-        return
-        newHomePageResponse(
+        return newHomePageResponse(
             request.name,
             listOf(page, page + 1).flatMap { p ->
                 app.get("$mainUrl/${request.data}?page=$p").document
@@ -52,6 +51,7 @@ class PiratexplayProvider : MainAPI() {
                     .mapNotNull { it.toSearchResult() }
             }
         )
+    }
 
     private fun Element.toSearchResult(): SearchResponse? {
         val title     = this.selectFirst("header h2")?.text()?.trim() ?: return null
@@ -60,10 +60,10 @@ class PiratexplayProvider : MainAPI() {
         return newMovieSearchResponse(title, href, TvType.Movie) { this.posterUrl = posterUrl }
     }
 
-    override suspend fun search(query: String, page: Int): SearchResponseList {
+    override suspend fun search(query: String): List<SearchResponse> {
         ensureDomain()
-        val document = app.get("$mainUrl/?s=$query&page=$page").document
-        return document.select("#movies-a ul li").mapNotNull { it.toSearchResult() }.toNewSearchResponseList()
+        val document = app.get("$mainUrl/?s=$query").document
+        return document.select("#movies-a ul li").mapNotNull { it.toSearchResult() }
     }
 
     override suspend fun load(url: String): LoadResponse {
