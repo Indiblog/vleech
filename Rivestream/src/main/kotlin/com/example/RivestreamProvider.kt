@@ -43,7 +43,7 @@ class RivestreamProvider : MainAPI() {
     override val supportedTypes     = setOf(TvType.Movie, TvType.TvSeries, TvType.Anime)
 
     companion object {
-        private const val TMDB_KEY  = "1865f43a0549ca50d341dd9ab8b29f49"
+        private const val TMDB_KEY  = "1711e8bc666246e1eb3a5c95546c8f4a"
         private const val TMDB_API  = "https://api.themoviedb.org/3"
         private const val TMDB_IMG  = "https://image.tmdb.org/t/p/w500"
         private const val TMDB_ORIG = "https://image.tmdb.org/t/p/original"
